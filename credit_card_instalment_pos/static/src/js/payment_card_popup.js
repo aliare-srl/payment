@@ -15,8 +15,6 @@ odoo.define("pos_card_instalment.payment_card_popup", function(require){
     class PaymentCardsPopupWidget extends AbstractAwaitablePopup {
         constructor() {
 			super(...arguments);
-
-
 		}
 
 		mounted() {

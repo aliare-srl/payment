@@ -4,7 +4,7 @@
     "summary": "",
     "description": """
     """,
-    "author": "Filoquin",
+    "author": "Filoquin, Ing. Gabriela Rivero",
     "website": "http://www.sipecu.com.ar",
     "category": "pos",
     "version": "13.0.0.1",
@@ -22,7 +22,6 @@
             "/credit_card_instalment_pos/static/src/js/payment_line.js",
             "/credit_card_instalment_pos/static/src/js/payment_card_popup.js",
             "/credit_card_instalment_pos/static/src/js/payment_screen.js",
-
         ],
         'web.assets_qweb': [
              'credit_card_instalment_pos/static/src/xml/card_instalment.xml',
