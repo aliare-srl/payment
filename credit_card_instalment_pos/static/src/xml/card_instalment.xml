@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <templates id="template" inherit_id="point_of_sale.template">
-    <t t-extend="PaymentScreen-Paymentlines">
-        <t t-jquery=".paymentline.selected" t-operation="after">
+	<t t-name="PaymentScreenPaymentLines" t-inherit="point_of_sale.PaymentScreenPaymentLines" t-inherit-mode="extension" owl="1">
+        <xpath expr="//div[hasclass('selected')]" position="after">
+
             <tr class="cardLine selected" t-if="line.payment_method.card_id and line.payment_status != 'done'">
                 <td ><i class="fa fa-lg fa-credit-card"></i></td>
                 <td colspan="2">
@@ -10,20 +11,21 @@
                         <option t-att-value="instalment_id.id">
                             <t t-esc="instalment_id.name"/>
                             <t t-set="amount" t-value="line.get_amount()"/>
-                            <t t-esc="widget.format_currency(amount * instalment_id.coefficient)"/>
+                            <t t-esc="env.pos.format_currency(amount * instalment_id.coefficient)"/>
                         </option>
                     </t>
                     </select>
             	</td>
-                <td colspan="2">
-                	<button id="btnData">Cargar datos</button>
-                </td>
+				<div class="payment-card" t-on-click="trigger('payment-card', { cid: line.cid })">
+					Cargar datos
+        		</div>
                 <td ></td>
             </tr>
-        </t>
+        </xpath>
+
     </t>
-    
-	<t t-name="PaymentCardsPopupWidget">
+
+	<t t-name="PaymentCardsPopupWidget" owl="1">
 	    <div role="dialog" class="modal-dialog">
 			<div class="popup">
 				<p class="title">Payment Method Card</p>
@@ -33,11 +35,11 @@
 						<label for="instalment">Seleccionar cantidad de cuotas: </label>
 						<div class="instalments">
 							<select class="instalment" id="selectPopupInstalments" name="instalment"></select>
-							<span class="widget-currency">$</span>
+							<span >$</span>
 		                	<span class="" id="amount"></span>
 		                	<span> total</span>
 						</div>
-						
+
 	                	<div id="form-card" class="form-field">
 							<label for="cc-number">Card number:</label>
 							<input id="cc-number" name="card_number" type="text" maxlength="6" placeholder="1111" required="required"></input>
@@ -52,8 +54,12 @@
 						</div>
 					</form>
 				</div>
+				<div class="footer">
+					<button class="button accept" id="btn-accept" t-on-click="getValue">Continuar</button>
+					<button class="button cancel" t-on-click="cancel">Cerrar</button>
+				</div>
 			</div>
 	    </div>
-	  </t>
+	</t>
 </templates>
 

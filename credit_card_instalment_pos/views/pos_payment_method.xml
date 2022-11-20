@@ -7,7 +7,7 @@
 		<field name="inherit_id" ref="point_of_sale.pos_payment_method_view_form"/>
 		<field name="arch" type="xml">
 			<field name="company_id" position="after">
-				<field attrs="{'invisible':[('is_cash_count','=',True)]}" name="card_id"/>
+				<field  name="card_id"/>
 			</field>
 		</field>
 	</record>
