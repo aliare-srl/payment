@@ -49,6 +49,7 @@ odoo.define("pos_card_instalment.payment_card_popup", function(require){
                 var amount = $('#selectPopupInstalments option:selected').attr('amount');
                 $('#amount').empty().text(amount);
             }
+            this.getValue()
 
         }
 
@@ -66,39 +67,35 @@ odoo.define("pos_card_instalment.payment_card_popup", function(require){
 
             console.log('order.get_paymentlines.........', order.get_paymentlines)
 
-            if ($(form)[0].checkValidity() === false) {
-                $('.message-error').removeClass('hidden');
-            } else {
-                let fd = new FormData(form[0]);
-                for (var pair of fd.entries()) {
-                    myformData[pair[0]] = pair[1];
-                }
-
-                let payment_method = line.payment_method;
-                let fee = $('#selectPopupInstalments option:selected').attr('coef');
-                let amountCof = $('#selectPopupInstalments option:selected').attr('amount');
-
-                let instalment_id = $('#selectPopupInstalments option:selected').val();
-
-                line['instalment_id'] = parseInt(instalment_id);
-                line['card_number'] = $('#cc-number').val();
-                line['tiket_number'] = $('#ticket-number').val();
-                line['lot_number'] = $('#lot-number').val();
-                line['fee'] = fee;
-
-                let product_id = parseInt(payment_method.instalment_product_id[0]);
-                console.log('product_id', product_id)
-                console.log('product_id', self.env.pos.db.get_product_by_id(product_id))
-                console.log('this', this.env.pos.db)
-                let product = self.env.pos.db.get_product_by_id(product_id);
-                order.add_product(product, {extras:{name: 'Cargo Tarjeta'}, price:fee,quantity:1, merge: false});
-                line.set_amount(amountCof) ;
-
-                line.set_payment_status('done');
-                // this.render_paymentlines();
-                // order.finalized = true; //TODO: Es la única forma que encontre de que no te deje borrar los productos.
-                this.trigger('close-popup');
+            let fd = new FormData(form[0]);
+            for (var pair of fd.entries()) {
+                myformData[pair[0]] = pair[1];
             }
+
+            let payment_method = line.payment_method;
+            let fee = $('#selectPopupInstalments option:selected').attr('coef');
+            let amountCof = $('#selectPopupInstalments option:selected').attr('amount');
+
+            let instalment_id = $('#selectPopupInstalments option:selected').val();
+
+            line['instalment_id'] = parseInt(instalment_id);
+            line['card_number'] = $('#cc-number').val();
+            line['tiket_number'] = $('#ticket-number').val();
+            line['lot_number'] = $('#lot-number').val();
+            line['fee'] = fee;
+
+            let product_id = parseInt(payment_method.instalment_product_id[0]);
+            console.log('product_id', product_id)
+            console.log('product_id', self.env.pos.db.get_product_by_id(product_id))
+            console.log('this', this.env.pos.db)
+            let product = self.env.pos.db.get_product_by_id(product_id);
+            order.add_product(product, {extras:{name: 'Cargo Tarjeta'}, price:fee,quantity:1, merge: false});
+            line.set_amount(amountCof) ;
+
+            line.set_payment_status('done');
+            // this.render_paymentlines();
+            // order.finalized = true; //TODO: Es la única forma que encontre de que no te deje borrar los productos.
+            this.trigger('close-popup');
         }
 
         cancel() {
