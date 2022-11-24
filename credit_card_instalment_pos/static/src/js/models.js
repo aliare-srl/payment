@@ -2,6 +2,9 @@ odoo.define('pos_card_instalment.models', function (require) {
     console.log('pos_card_instalment.models');
 
     let models = require('point_of_sale.models');
+    var { Gui } = require('point_of_sale.Gui');
+    const PaymentScreen = require('point_of_sale.PaymentScreen');
+    const Registries = require('point_of_sale.Registries');
 
     // Agrego los campos en la tarjeta
     models.load_fields('pos.payment.method', ['card_id','instalment_ids', 'instalment_product_id']);
@@ -26,5 +29,33 @@ odoo.define('pos_card_instalment.models', function (require) {
         }
     },
     ]);
+
+    const POSValidateOverride = PaymentScreen =>
+        class extends PaymentScreen {
+            /**
+             * @override
+             */
+            async validateOrder(isForceValidate) {
+                console.log('POSValidateOverride::validateOrder(): successfully overridden');
+                let payment_flag = false;
+                for (let line of this.paymentLines) {
+                    if (line.payment_status != 'done') payment_flag = true;
+                }
+                if (payment_flag){
+                    Gui.showPopup('ConfirmPopup', {
+                        title: 'Error',
+                        body: 'Debe confirmar los pagos',
+                    });
+                    return;
+                }
+                else {
+                    await super.validateOrder(isForceValidate);
+                }
+            }
+        };
+
+    Registries.Component.extend(PaymentScreen, POSValidateOverride);
+
+    return PaymentScreen;
 
 });
