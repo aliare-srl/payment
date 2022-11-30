@@ -6,7 +6,7 @@
             <tr class="cardLine selected" t-if="line.payment_method.card_id and line.payment_status != 'done'">
                 <td ><i class="fa fa-lg fa-credit-card"></i></td>
                 <td colspan="2">
-                    <select class="instalment" name="instalment" >
+                    <select class="instalment" name="instalment" style="width: 14rem">
                     <t t-foreach='line.payment_method.instalments' t-as='instalment_id'>
                         <option t-att-value="instalment_id.id">
                             <t t-esc="instalment_id.name"/>
