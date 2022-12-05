@@ -91,7 +91,20 @@ odoo.define("pos_card_instalment.payment_card_popup", function(require){
                 console.log('product_id', self.env.pos.db.get_product_by_id(product_id))
                 console.log('this', this.env.pos.db)
                 let product = self.env.pos.db.get_product_by_id(product_id);
-                order.add_product(product, {extras:{name: 'Cargo Tarjeta'}, price:fee,quantity:1, merge: false});
+
+                let tax = this.env.pos.taxes_by_id[product.taxes_id[0]];
+                console.log('tax', tax)
+                if (tax['price_include'] == false) {
+                    let calc_tax = (tax['amount']/100)+1;
+                    fee = fee/(calc_tax);
+                    console.log('calc_tax', calc_tax)
+                    console.log('new fee', fee)
+                }
+                order.add_product(product, {extras:{name: 'Cargo Tarjeta'},
+                                                    price: fee,
+                                                    quantity: 1,
+                                                    merge: false
+                                                   });
                 line.set_amount(amountCof) ;
 
                 line.set_payment_status('done');
