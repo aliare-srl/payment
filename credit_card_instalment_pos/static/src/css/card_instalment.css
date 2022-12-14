@@ -11,7 +11,7 @@
     position: relative;
     border-radius: 3px;
     font-size: 22px;
-    
+
 }
 .pos .popup .body {
 	margin-top: 4px;
@@ -63,4 +63,8 @@
 	text-align: center;
     font-size: 15px;
     color: red;
+}
+.pos .close-pos-popup {
+	max-width: 800px !important;
+	max-height: 1000px !important;
 }
