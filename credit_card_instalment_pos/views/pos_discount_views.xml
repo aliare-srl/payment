@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+        <record id="pos_config_view_form_inherit_pos_discount_inherit" model="ir.ui.view">
+            <field name="name">pos.config.form.inherit.pos.discount</field>
+            <field name="model">pos.config</field>
+            <field name="inherit_id" ref="point_of_sale.pos_config_view_form" />
+            <field name="arch" type="xml">
+                <div id="company" position="after">
+                    <div id="saleme_discount" class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_right_pane">
+                            <label string="Saleme Discount" for="saleme_discount" class="col-lg-12 o_light_label"/>
+                            <field name="saleme_discount" />
+                            <label string="Discount Product" for="saleme_discount_product_id" class="col-lg-12 o_light_label"
+                                attrs="{'invisible':[('saleme_discount','!=',True)]}"/>
+                            <field name="saleme_discount_product_id"
+                            attrs="{'required':[('saleme_discount','=',True)],'invisible':[('saleme_discount','!=',True)]}" />
+                            <label string="Discount %" for="saleme_discount_pc" class="col-lg-12 o_light_label"
+                                attrs="{'invisible':[('saleme_discount','!=',True)]}"/>
+                            <field name="saleme_discount_pc" attrs="{'invisible':[('saleme_discount','!=',True)]}"/>
+
+                            <label string="Saleme Cash Payment Method" for="saleme_cash_id" class="col-lg-12 o_light_label"
+                                attrs="{'invisible':[('saleme_discount','!=',True)]}"/>
+                            <field name="saleme_cash_id"
+                                attrs="{'required':[('saleme_discount','=',True)],'invisible':[('saleme_discount','!=',True)]}"/>
+                        </div>
+                    </div>
+                </div>
+            </field>
+        </record>
+
+</odoo>

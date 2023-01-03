@@ -14,6 +14,8 @@
         "views/pos_payment_method.xml",
         "views/pos_make_payment.xml",
         "views/pos_payment.xml",
+        'views/pos_discount_views.xml',
+
     ],
     'assets': {
         "point_of_sale.assets": [

@@ -63,7 +63,7 @@ odoo.define("pos_card_instalment.payment_card_popup", function(require){
             }
         }
 
-        getValuePopup() {
+        async getValuePopup() {
             console.log('getValuePopup')
             let self = this;
             let myformData = {};
@@ -109,17 +109,115 @@ odoo.define("pos_card_instalment.payment_card_popup", function(require){
                 console.log('calc_tax', calc_tax)
                 console.log('new fee', fee)
             }
-            order.add_product(product, {extras:{name: 'Cargo Tarjeta'},
-                                                price: fee,
-                                                quantity: 1,
-                                                merge: false
-                                                });
-            line.set_amount(amountCof) ;
+            // if (fee != 0) {
+            //     order.add_product(product, {extras:{name: 'Cargo Tarjeta'},
+            //                                         price: fee,
+            //                                         quantity: 1,
+            //                                         merge: false
+            //                                         });
+            // }
+            // line.set_amount(amountCof) ;
 
-            line.set_payment_status('done');
-            // this.render_paymentlines();
-            // order.finalized = true; //TODO: Es la única forma que encontre de que no te deje borrar los productos.
-            this.trigger('close-popup');
+            // line.set_payment_status('done');
+            // // this.render_paymentlines();
+            // // order.finalized = true; //TODO: Es la única forma que encontre de que no te deje borrar los productos.
+            // this.trigger('close-popup');
+            if (line['payment_method']['type']=='cash' && this.env.pos.config.saleme_discount) {
+                // alert('ok')
+                console.log('amountCof......----', amountCof)
+                var due = this.env.pos.get_order().get_total_with_tax();
+
+                var pc = this.env.pos.config.saleme_discount_pc;
+                console.log('pc', pc)
+                const { confirmed, payload } = await this.showPopup('NumberPopup', {
+                    title: this.env._t('Ingrese el monto en efectivo. ('+pc+'% de descuento.)'),
+                    body: this.env._t('This click is successfully done.'),
+                    startingValue: parseFloat(amountCof),
+                });
+                if (confirmed) {
+                    console.log('payload', payload);
+                    const val = parseFloat(payload);
+
+                    await self.apply_discount(val);
+                    console.log('fee------', fee)
+
+                    if (fee != 0) {
+                        order.add_product(product, {extras:{name: 'Cargo Tarjeta'},
+                                                            price: fee,
+                                                            quantity: 1,
+                                                            merge: false,
+                                                            });
+                    }
+                    line.set_amount(val) ;
+
+                    line.set_payment_status('done');
+                    // this.render_paymentlines();
+                    // order.finalized = true; //TODO: Es la única forma que encontre de que no te deje borrar los productos.
+                    // this.trigger('close-popup');
+                }
+            } else {
+                if (fee != 0) {
+                    order.add_product(product, {extras:{name: 'Cargo Tarjeta'},
+                                                        price: fee,
+                                                        quantity: 1,
+                                                        merge: false,
+                                                        });
+                }
+                line.set_amount(amountCof) ;
+
+
+
+                line.set_payment_status('done');
+                // this.render_paymentlines();
+                // order.finalized = true; //TODO: Es la única forma que encontre de que no te deje borrar los productos.
+                this.trigger('close-popup');
+
+            }
+        }
+
+        async apply_discount(base_to_discount) {
+            var order    = this.env.pos.get_order();
+            var lines    = order.get_orderlines();
+            var product  = this.env.pos.db.get_product_by_id(this.env.pos.config.saleme_discount_product_id[0]);
+            if (product === undefined) {
+                await this.showPopup('ErrorPopup', {
+                    title : this.env._t("No discount product found"),
+                    body  : this.env._t("The discount product seems misconfigured. Make sure it is flagged as 'Can be Sold' and 'Available in Point of Sale'."),
+                });
+                return;
+            }
+
+            // Remove existing discounts
+            for (const line of lines) {
+                if (line.get_product() === product) {
+                    order.remove_orderline(line);
+                }
+            }
+
+            // Add discount
+            // We add the price as manually set to avoid recomputation when changing customer.
+
+            // var base_to_discount = order.get_total_without_tax();
+            // if (product.taxes_id.length){
+            //     var first_tax = this.env.pos.taxes_by_id[product.taxes_id[0]];
+            //     if (first_tax.price_include) {
+            //         base_to_discount = order.get_total_with_tax();
+            //     }
+            // }
+
+            var pc = this.env.pos.config.saleme_discount_pc;
+
+            var discount = - pc / 100.0 * base_to_discount;
+
+            if( discount < 0 ){
+                order.add_product(product, {
+                    price: discount,
+                    lst_price: discount,
+                    extras: {
+                        price_manually_set: true,
+                    },
+                });
+            }
         }
 
         getValue() {
