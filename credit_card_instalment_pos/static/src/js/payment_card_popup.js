@@ -136,11 +136,22 @@ odoo.define("pos_card_instalment.payment_card_popup", function(require){
                 if (confirmed) {
                     console.log('payload', payload);
                     var val = parseFloat(payload);
-                    var due = this.env.pos.get_order().get_total_with_tax();
+                    var total = this.env.pos.get_order().get_total_with_tax();
+                    var acum = this.env.pos.get_order().get_acum_no_cash();
+                    // var due = parseFloat(this.env.pos.get_order().get_due());
+                    console.log('val', val)
+                    // console.log('due', due)
+                    console.log('total', total)
+                    console.log('acum', acum)
 
-                    if (val > due) {
+                    var due = total - acum;
+                    console.log('due', due)
+
+                    if (val > due && due != 0) {
                         val = due;
                     }
+                    console.log('val', val)
+
 
                     await self.apply_discount(val);
                     console.log('fee------', fee)
@@ -152,7 +163,7 @@ odoo.define("pos_card_instalment.payment_card_popup", function(require){
                                                             merge: false,
                                                             });
                     }
-                    line.set_amount(val) ;
+                    line.set_amount(parseFloat(payload)) ;
 
                     line.set_payment_status('done');
                     // this.render_paymentlines();
