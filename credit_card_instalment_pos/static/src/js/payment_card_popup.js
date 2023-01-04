@@ -125,7 +125,6 @@ odoo.define("pos_card_instalment.payment_card_popup", function(require){
             if (line['payment_method']['type']=='cash' && this.env.pos.config.saleme_discount) {
                 // alert('ok')
                 console.log('amountCof......----', amountCof)
-                var due = this.env.pos.get_order().get_total_with_tax();
 
                 var pc = this.env.pos.config.saleme_discount_pc;
                 console.log('pc', pc)
@@ -136,7 +135,12 @@ odoo.define("pos_card_instalment.payment_card_popup", function(require){
                 });
                 if (confirmed) {
                     console.log('payload', payload);
-                    const val = parseFloat(payload);
+                    var val = parseFloat(payload);
+                    var due = this.env.pos.get_order().get_total_with_tax();
+
+                    if (val > due) {
+                        val = due;
+                    }
 
                     await self.apply_discount(val);
                     console.log('fee------', fee)
