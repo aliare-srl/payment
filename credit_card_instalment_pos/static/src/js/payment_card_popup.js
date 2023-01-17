@@ -224,6 +224,12 @@ odoo.define("pos_card_instalment.payment_card_popup", function(require){
 
             var discount = - pc / 100.0 * base_to_discount;
 
+            var tax = this.env.pos.taxes_by_id[product['taxes_id'][0]];
+            if (tax['price_include'] == false) {
+                let calc_tax = (tax['amount']/100)+1;
+                discount = discount/(calc_tax);
+                discount = Math.round(discount * 100) / 100
+            }
             if( discount < 0 ){
                 order.add_product(product, {
                     price: discount,
