@@ -13,7 +13,11 @@
                             <label string="Discount Product" for="saleme_discount_product_id" class="col-lg-12 o_light_label"
                                 attrs="{'invisible':[('saleme_discount','!=',True)]}"/>
                             <field name="saleme_discount_product_id"
-                            attrs="{'required':[('saleme_discount','=',True)],'invisible':[('saleme_discount','!=',True)]}" />
+                                attrs="{'required':[('saleme_discount','=',True)],'invisible':[('saleme_discount','!=',True)]}" />
+                            <label string="Round Product" for="saleme_round_product_id" class="col-lg-12 o_light_label"
+                                attrs="{'invisible':[('saleme_discount','!=',True)]}"/>
+                            <field name="saleme_round_product_id"
+                                attrs="{'required':[('saleme_discount','=',True)],'invisible':[('saleme_discount','!=',True)]}" />
                             <label string="Discount %" for="saleme_discount_pc" class="col-lg-12 o_light_label"
                                 attrs="{'invisible':[('saleme_discount','!=',True)]}"/>
                             <field name="saleme_discount_pc" attrs="{'invisible':[('saleme_discount','!=',True)]}"/>

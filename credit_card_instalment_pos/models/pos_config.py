@@ -18,8 +18,14 @@ class PosConfig(models.Model):
     saleme_discount_product_id = fields.Many2one(
         'product.product',
         string='Discount Product Saleme',
-        domain="[('sale_ok', '=', True)]",
+        domain="[('sale_ok', '=', True), ('available_in_pos', '=', True)]",
         help='The product used to model the discount.'
+    )
+    saleme_round_product_id = fields.Many2one(
+        'product.product',
+        string='Round Product Saleme',
+        domain="[('sale_ok', '=', True), ('available_in_pos', '=', True)]",
+        help='The product used to model the rounding.'
     )
     saleme_cash_id = fields.Many2one(
         'pos.payment.method',
